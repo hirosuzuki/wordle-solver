@@ -1,5 +1,5 @@
-solver: solver.go
-	go build -o solver solver.go
+wordle-solver: solver.go
+	go build -o wordle-solver
 
 clean:
-	rm solver
+	rm wordle-solver
