@@ -2,11 +2,16 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"sort"
 	"strconv"
 )
+
+//go:embed wordles.txt
+var wordles []byte
 
 var score_list []int
 
@@ -21,13 +26,7 @@ func init() {
 		score_list[i] = (i % 3) + (i/3%3)*10 + (i/9%3)*100 + (i/27%3)*1000 + (i/81%3)*10000
 	}
 
-	word_list = make([]string, 0)
-	fp, err := os.Open("wordles.txt")
-	if err != nil {
-		panic(err)
-	}
-	defer fp.Close()
-
+	fp := bytes.NewReader(wordles)
 	scanner := bufio.NewScanner(fp)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -115,9 +114,9 @@ func calc(words []string, word_list []string) map[string]int {
 }
 
 func print_words(words []string) {
-	for i := 0; i < len(words); i += 1 {
-		fmt.Print(words[i])
-		if i%10 == 9 {
+	for i, word := range words {
+		fmt.Print(word)
+		if i%20 == 19 {
 			fmt.Print("\n")
 		} else {
 			fmt.Print(" ")
