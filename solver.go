@@ -120,15 +120,20 @@ func calc(words []string, word_list []string) map[string]int {
 }
 
 func print_words(words []string) {
+	cr := true
 	for i, word := range words {
 		fmt.Print(word)
+		cr = false
 		if i%20 == 19 {
 			fmt.Print("\n")
+			cr = true
 		} else {
 			fmt.Print(" ")
 		}
 	}
-	fmt.Println("\nCount:", len(words))
+	if !cr {
+		fmt.Print("\n")
+	}
 }
 
 func filter_by_args(words []string, args []string) []string {
@@ -166,11 +171,16 @@ func calc_cmd(args []string) {
 		}
 		fmt.Print("\n")
 	}
+	fmt.Println("Count:", len(words))
+	if len(words) <= 20 {
+		print_words(words)
+	}
 }
 
 func solve_cmd(args []string) {
 	words := filter_by_args(word_list, args)
 	print_words(words)
+	fmt.Println("Count:", len(words))
 }
 
 func score_cmd(args []string) {
