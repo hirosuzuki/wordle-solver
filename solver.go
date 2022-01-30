@@ -164,9 +164,9 @@ func score_cmd(args []string) {
 		fmt.Println("Usage:", os.Args[0], "score <answer> <input>")
 		os.Exit(1)
 	}
-	score := calc_score(os.Args[2], os.Args[3])
-	fmt.Printf("answer: %s\n", os.Args[2])
-	fmt.Printf("input : %s\n", os.Args[3])
+	score := calc_score(args[0], args[1])
+	fmt.Printf("answer: %s\n", args[0])
+	fmt.Printf("input : %s\n", args[1])
 	fmt.Printf("score : %05d\n", score)
 }
 
