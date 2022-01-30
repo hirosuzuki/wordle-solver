@@ -51,21 +51,35 @@ func init() {
 }
 
 func calc_score(answer string, input string) int {
+	answer_chars := []rune(answer)
+	vs := make([]int, len(input))
+
 	result := 0
-	for i := 0; i < 5; i++ {
-		result *= 10
-		ch := input[i]
-		if answer[i] == ch {
-			result += 2
-		} else {
-			for j := 0; j < 5; j++ {
-				if answer[j] == ch {
-					result += 1
+
+	for i, ch := range input {
+		if answer_chars[i] == ch {
+			vs[i] = 2
+			answer_chars[i] = 0
+		}
+	}
+
+	for i, ch := range input {
+		if vs[i] == 0 {
+			for j := 0; j < len(answer_chars); j++ {
+				if answer_chars[j] == ch {
+					vs[i] = 1
+					answer_chars[j] = 0
 					break
 				}
 			}
 		}
 	}
+
+	result = 0
+	for i := 0; i < len(vs); i++ {
+		result = result*10 + vs[i]
+	}
+
 	return result
 }
 
