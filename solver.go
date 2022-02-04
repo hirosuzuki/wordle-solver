@@ -276,6 +276,75 @@ func calc2_cmd(args []string) {
 	// print(words)
 }
 
+type input_word struct {
+	input            string
+	worst_case_count int
+	just_case_count  int
+	two_case_count   int
+	three_case_count int
+	is_answer        bool
+}
+
+func calc3_cmd(args []string) {
+	words := filter_by_args(answers_word_list, args)
+	word_map := make(map[string]bool)
+	for _, word := range words {
+		word_map[word] = true
+	}
+	input_word_list := make([]input_word, len(all_word_list))
+	for i, input := range all_word_list {
+		count_by_score := make(map[int]int)
+		for _, w := range words {
+			score := calc_score(w, input)
+			count_by_score[score] += 1
+		}
+		worst_case_count := 0
+		just_case_count := 0
+		two_case_count := 0
+		three_case_count := 0
+		for _, score := range score_list {
+			case_count := count_by_score[score]
+			if case_count > 0 {
+				if case_count > worst_case_count {
+					worst_case_count = case_count
+				}
+				if case_count == 1 {
+					just_case_count += 1
+				}
+				if case_count == 2 {
+					two_case_count += 1
+				}
+				if case_count == 3 {
+					three_case_count += 1
+				}
+			}
+		}
+		input_word_list[i] = input_word{input: input, worst_case_count: worst_case_count, just_case_count: just_case_count, two_case_count: two_case_count, three_case_count: three_case_count, is_answer: word_map[input]}
+	}
+	sort.SliceStable(input_word_list, func(i int, j int) bool {
+		d := input_word_list[i].worst_case_count - input_word_list[j].worst_case_count
+		if d != 0 {
+			return d > 0
+		}
+		if input_word_list[i].is_answer != input_word_list[j].is_answer {
+			return !input_word_list[i].is_answer
+		}
+		d = input_word_list[i].just_case_count - input_word_list[j].just_case_count
+		return d < 0
+	})
+	for i := range input_word_list {
+		fmt.Printf("%s %4d %3d %3d %3d", input_word_list[i].input, input_word_list[i].worst_case_count, input_word_list[i].just_case_count, input_word_list[i].two_case_count, input_word_list[i].three_case_count)
+		if input_word_list[i].is_answer {
+			fmt.Print(" *")
+		}
+		fmt.Println()
+	}
+	fmt.Println("Count:", len(words))
+	if len(words) <= 20 {
+		print_words(words)
+	}
+}
+
 func usage() {
 	fmt.Printf("Usage: %s [OPTIONS] COMMAND\n", os.Args[0])
 	fmt.Println()
@@ -342,6 +411,8 @@ func main() {
 		sim_cmd(flag.Args()[1:])
 	case "calc2":
 		calc2_cmd(flag.Args()[1:])
+	case "calc3":
+		calc3_cmd(flag.Args()[1:])
 	default:
 		usage()
 	}
